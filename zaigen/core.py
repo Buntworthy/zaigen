@@ -1,4 +1,5 @@
 # zaigen core data structures
+import zaigen
 
 class Graph(object):
 	
@@ -17,11 +18,11 @@ class Graph(object):
 		self.edges.append(edge)
 
 	def update(self):
-		self.reset_graph()
+		self.reset()
 		self.update_pre_edges()
 		self.main_update()
 
-	def reset_graph(self):
+	def reset(self):
 		for node in self.nodes:
 			node.reset()
 		for edge in self.edges:
@@ -75,15 +76,15 @@ class Node(object):
 		self.current_in_degree = self.in_degree
 
 	def update(self):
-		print(f'Updating: {self.name}')
-		print(f'Initial value = {self.value}')
+		#print(f'Updating: {self.name}')
+		#print(f'Initial value = {self.value}')
 		for node in self.downstream_nodes:
 			for edge in node.edge_list:
-				if edge.start_node is self:
+				if edge.start_node is self and not edge.updated:
 					edge.update()
 			node.current_in_degree -= 1
 		self.updated = True
-		print(f'Final value = {self.value}')
+		#print(f'Final value = {self.value}')
 
 	def reset(self):
 		self.updated = False
@@ -103,10 +104,12 @@ class Edge(object):
 		self.name = name
 		self.start_node = start_node
 		self.end_node = end_node
-		self.weight = weight
 		self.updated = False
 		self.applied = False
-		self.pre_update = False
+		if isinstance(weight, (int, float)):
+			self.weight = zaigen.Constant(weight)
+		else:
+			self.weight = weight
 
 		self.start_node.edge_list.append(self)
 		self.end_node.edge_list.append(self)
@@ -114,15 +117,19 @@ class Edge(object):
 		self.end_node.upstream_nodes.append(self.start_node)
 
 	def update(self):
-		print(f'Updated: {self.name}')
-		#TODO update weight
-		self.start_node.value -= self.weight
-		self.end_node.value += self.weight
+		self.weight.update(self)
+		self.start_node.value -= self.weight.value
+		self.end_node.value += self.weight.value
 		self.updated = True
+		#print(f'Updated: {self.name}, weight = {self.weight.value}')
 
 	def reset(self):
 		self.updated = False
 		
+	@property
+	def pre_update(self):
+		return self.weight.pre_update
+
 	def __repr__(self):
 		return f'Edge(name=\'{self.name}\', ' \
 						f'start_node=\'{self.start_node.name}\', ' \

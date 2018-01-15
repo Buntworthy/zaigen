@@ -9,6 +9,7 @@ name = "pypi"
 
 ptpython = "*"
 pytest = "*"
+pytest-cov = "*"
 
 
 [dev-packages]

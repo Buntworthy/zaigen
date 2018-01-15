@@ -72,3 +72,11 @@ def test_update_graph():
 	g.update()
 
 	assert n_out.value == 100
+
+	g.reset()
+
+	assert n_out.value == 100
+
+	g.update()
+	
+	assert n_out.value == 200
