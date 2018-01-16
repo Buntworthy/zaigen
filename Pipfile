@@ -11,6 +11,8 @@ ptpython = "*"
 pytest = "*"
 pytest-cov = "*"
 graphviz = "*"
+pygal = "*"
+lxml = "*"
 
 
 [dev-packages]

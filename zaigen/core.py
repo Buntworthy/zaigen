@@ -1,4 +1,3 @@
-# zaigen core data structures
 import zaigen
 
 class Graph(object):
@@ -74,17 +73,16 @@ class Node(object):
 		self.value = 0
 		self.updated = False
 		self.current_in_degree = self.in_degree
+		self.history = [self.value]
 
 	def update(self):
-		#print(f'Updating: {self.name}')
-		#print(f'Initial value = {self.value}')
 		for node in self.downstream_nodes:
 			for edge in node.edge_list:
 				if edge.start_node is self and not edge.updated:
 					edge.update()
 			node.current_in_degree -= 1
 		self.updated = True
-		#print(f'Final value = {self.value}')
+		self.history.append(self.value)
 
 	def reset(self):
 		self.updated = False
@@ -110,7 +108,7 @@ class Edge(object):
 			self.weight = zaigen.Constant(weight)
 		else:
 			self.weight = weight
-
+		self.history = [self.weight.value]
 		self.start_node.edge_list.append(self)
 		self.end_node.edge_list.append(self)
 		self.start_node.downstream_nodes.append(self.end_node)
@@ -120,8 +118,8 @@ class Edge(object):
 		self.weight.update(self)
 		self.start_node.value -= self.weight.value
 		self.end_node.value += self.weight.value
+		self.history.append(self.weight.value)
 		self.updated = True
-		#print(f'Updated: {self.name}, weight = {self.weight.value}')
 
 	def reset(self):
 		self.updated = False
