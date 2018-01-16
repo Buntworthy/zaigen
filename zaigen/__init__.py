@@ -6,3 +6,5 @@ from .weights import Weight
 from .weights import Remaining
 from .weights import Interest
 from .weights import Constant
+
+from .viz import show
