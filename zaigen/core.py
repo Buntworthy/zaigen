@@ -10,8 +10,8 @@ class Graph(object):
 		self.current_node = inter
 
 	def add_node(self, node):
-		if node.name in [node.name for node in self.nodes]:
-			node.name += '1'
+		while node.name in [node.name for node in self.nodes]:
+			node.name += '.'
 		self.nodes.append(node)
 
 	def get_node(self, node_name):
@@ -19,8 +19,8 @@ class Graph(object):
 		return matching_nodes[0]
 
 	def add_edge(self, edge):
-		if edge.name in [edge.name for edge in self.edges]:
-			edge.name += '1'
+		while edge.name in [edge.name for edge in self.edges]:
+			edge.name += '.'
 		self.edges.append(edge)
 
 	def update(self):
