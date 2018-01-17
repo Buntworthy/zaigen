@@ -5,8 +5,13 @@ class Graph(object):
 	def __init__(self):
 		self.nodes = []
 		self.edges = []
+		inter = zaigen.Node('inter')
+		self.add_node(inter)
+		self.current_node = inter
 
 	def add_node(self, node):
+		if node.name in [node.name for node in self.nodes]:
+			node.name += '1'
 		self.nodes.append(node)
 
 	def get_node(self, node_name):
@@ -14,6 +19,8 @@ class Graph(object):
 		return matching_nodes[0]
 
 	def add_edge(self, edge):
+		if edge.name in [edge.name for edge in self.edges]:
+			edge.name += '1'
 		self.edges.append(edge)
 
 	def update(self):
@@ -28,7 +35,7 @@ class Graph(object):
 			edge.reset()
 
 	def main_update(self):
-		# Bredth first update
+		# Breadth first update
 		while not self.updated:
 			nodes_to_update = [node 
 				for node in self.nodes 

@@ -10,7 +10,6 @@ def test_simple_transfers():
 	in2 --> saving2		out1
 	"""
 
-
 	g = zaigen.Graph()
 	g.add_node(zaigen.Node('in1'))
 	g.add_node(zaigen.Node('in2'))
