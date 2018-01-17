@@ -1,11 +1,14 @@
+import zaigen
+
 class Weight(object):
 
 	def __init__(self):
 		self.value = 0
 		self.pre_update = False
+		self.schedule = zaigen.schedules.Schedule()
 
 	def update(self, edge):
-		pass
+		self.value = self.schedule.update(self.value)
 
 class Constant(Weight):
 

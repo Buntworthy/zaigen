@@ -31,11 +31,11 @@ def test_simple_transfers():
 	g.add_edge(zaigen.Edge('interest1', 
 				start_node=g.get_node('in2'), 
 				end_node=g.get_node('saving2'), 
-				weight=zaigen.Interest(0.1))) # 10% interest
+				weight=zaigen.weights.Interest(0.1))) # 10% interest
 	g.add_edge(zaigen.Edge('remain1', 
 				start_node=g.get_node('inter1'), 
 				end_node=g.get_node('inter2'), 
-				weight=zaigen.Remaining(1))) # all remaining
+				weight=zaigen.weights.Remaining(1))) # all remaining
 	g.add_edge(zaigen.Edge('expense1', 
 				start_node=g.get_node('inter2'), 
 				end_node=g.get_node('out1'), 
@@ -43,7 +43,7 @@ def test_simple_transfers():
 	g.add_edge(zaigen.Edge('remain2', 
 				start_node=g.get_node('inter2'), 
 				end_node=g.get_node('saving1'), 
-				weight=zaigen.Remaining(1))) # all remaining
+				weight=zaigen.weights.Remaining(1))) # all remaining
 
 	for _ in range(10):
 		n = g.get_node('saving2')

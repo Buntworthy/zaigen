@@ -105,7 +105,7 @@ class Edge(object):
 		self.updated = False
 		self.applied = False
 		if isinstance(weight, (int, float)):
-			self.weight = zaigen.Constant(weight)
+			self.weight = zaigen.weights.Constant(weight)
 		else:
 			self.weight = weight
 		self.history = [self.weight.value]
