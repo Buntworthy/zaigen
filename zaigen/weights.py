@@ -44,3 +44,16 @@ class Remaining(Weight):
 
 	def __repr__(self):
 		return(f'Remaining({self.fraction})')
+
+class EdgeLinked(Weight):
+
+	def __init__(self, rate, edge):
+		super(EdgeLinked, self).__init__()
+		self.rate = rate
+		self.edge = edge
+
+	def update(self, edge):
+		self.value = self.rate*self.edge.weight.value
+
+	def __repr__(self):
+		return(f'EdgeLinked({self.rate}, {self.edge})')

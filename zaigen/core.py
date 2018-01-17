@@ -23,10 +23,21 @@ class Graph(object):
 			edge.name += '.'
 		self.edges.append(edge)
 
+	def get_edge(self, edge_name):
+		matching_edges = [edge for edge in self.edges if edge.name == edge_name]
+		return matching_edges[0]
+
 	def update(self):
 		self.reset()
 		self.update_pre_edges()
 		self.main_update()
+		self.record()
+
+	def record(self):
+		for node in self.nodes:
+			node.record()
+		for edge in self.edges:
+			edge.record()
 
 	def reset(self):
 		for node in self.nodes:
@@ -89,6 +100,8 @@ class Node(object):
 					edge.update()
 			node.current_in_degree -= 1
 		self.updated = True
+
+	def record(self):
 		self.history.append(self.value)
 
 	def reset(self):
@@ -125,8 +138,10 @@ class Edge(object):
 		self.weight.update(self)
 		self.start_node.value -= self.weight.value
 		self.end_node.value += self.weight.value
-		self.history.append(self.weight.value)
 		self.updated = True
+	
+	def record(self):
+		self.history.append(self.weight.value)
 
 	def reset(self):
 		self.updated = False
