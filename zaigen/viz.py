@@ -1,16 +1,24 @@
 from graphviz import Digraph
 import pygal
 
-def show_graph(graph):
+def show_graph(graph, filename=None):
 	dot = Digraph(comment='zaigen graph')
 	for node in graph.nodes:
-		dot.node(node.name, f'{node.name} = {node.value:.0f}')
+		if 'inter' in node.name:
+			label = ''
+		else:
+			label = f'{node.name} = {node.value:.0f}'
+		dot.node(node.name, label)
 	for edge in graph.edges:
 		dot.edge(edge.start_node.name, 
 					edge.end_node.name,
 					label=f'{edge.name} = {edge.weight.value:.0f}')
 
-	dot.view()
+	dot.format = 'png'
+	if filename:
+		dot.render(filename=filename, view=False, cleanup=True)
+	else:
+		dot.view(cleanup=True)
 
 def plot_node(nodes):
 	line_chart = pygal.Line()

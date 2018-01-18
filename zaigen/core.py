@@ -5,9 +5,7 @@ class Graph(object):
 	def __init__(self):
 		self.nodes = []
 		self.edges = []
-		inter = zaigen.Node('inter')
-		self.add_node(inter)
-		self.current_node = inter
+		self.current_node = None
 
 	def add_node(self, node):
 		while node.name in [node.name for node in self.nodes]:
@@ -83,7 +81,7 @@ class Graph(object):
 class Node(object):
 	"""Basic node data structure for money graph"""
 
-	def __init__(self, name):
+	def __init__(self, name, node_type=None):
 		self.name = name
 		self.upstream_nodes = []
 		self.downstream_nodes = []
@@ -92,6 +90,7 @@ class Node(object):
 		self.updated = False
 		self.current_in_degree = self.in_degree
 		self.history = [self.value]
+		self.type = node_type
 
 	def update(self):
 		for node in self.downstream_nodes:

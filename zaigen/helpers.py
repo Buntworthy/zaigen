@@ -1,17 +1,54 @@
 import zaigen
 
+def make_inflation(rate):
+	inflation_schedule = zaigen.schedules.ConstantRate(rate)
+
+	def inflation(schedule):
+		if schedule:
+			return zaigen.schedules.CompositeSchedule(schedule, inflation_schedule)
+		else:
+			return inflation_schedule
+
+	return inflation
+
+def join_graphs(graph1, graph2):
+	node1 = graph1.current_node
+	node2 = graph2.current_node
+	new_node = zaigen.Node('inter')
+
+	for node in graph2.nodes:
+		graph1.add_node(node)
+
+	for edge in graph2.edges:
+		graph1.add_edge(edge)
+
+	graph1.add_node(new_node)
+	graph1.add_edge(zaigen.Edge('transfer', 
+					node1,
+					new_node,
+					zaigen.weights.Remaining(1)))
+	graph1.add_edge(zaigen.Edge('transfer', 
+					node2,
+					new_node,
+					zaigen.weights.Remaining(1)))
+	graph1.current_node = new_node
+
 def add_salary(graph, name, value):
-	graph.add_node(zaigen.Node('in'))
+	in_node = zaigen.Node('in', node_type='source')
+	inter_node = zaigen.Node('inter')
+	graph.add_node(in_node)
+	graph.add_node(inter_node)
 	graph.add_edge(zaigen.Edge(name, 
-								graph.get_node('in'), 
-								graph.current_node, 
+								in_node,
+								inter_node, 
 								value))
+	graph.current_node = inter_node
 	
 
 def add_pension(graph, rate, salary_edge, contrib_rate, interest_rate):
-	pension_pot = zaigen.Node('pension_pot')
-	interest_in_node = zaigen.Node('interest_in')
-	pension_contrib_node = zaigen.Node('pension_contrib')
+	pension_pot = zaigen.Node('pension_pot', node_type='asset')
+	interest_in_node = zaigen.Node('interest_in', node_type='source')
+	pension_contrib_node = zaigen.Node('pension_contrib', node_type='source')
 
 	graph.add_node(pension_pot)
 	graph.add_node(interest_in_node)
@@ -28,7 +65,8 @@ def add_pension(graph, rate, salary_edge, contrib_rate, interest_rate):
 	graph.add_edge(zaigen.Edge('pesnion_contrib', 
 								pension_contrib_node, 
 								pension_pot, 
-								zaigen.weights.EdgeLinked(contrib_rate, salary_edge)))
+								zaigen.weights.EdgeLinked(contrib_rate, 
+									graph.get_edge(salary_edge))))
 	add_transfer(graph)
 	
 def add_transfer(graph):
@@ -40,19 +78,39 @@ def add_transfer(graph):
 								zaigen.weights.Remaining(1)))
 	graph.current_node = new_end_node
 
+def add_final_savings(graph):
+	new_end_node = zaigen.Node('savings', node_type='asset')
+	graph.add_node(new_end_node)
+	graph.add_edge(zaigen.Edge('transfer', 
+								graph.current_node, 
+								new_end_node, 
+								zaigen.weights.Remaining(1)))
+	graph.current_node = new_end_node
+
+	interest_in_node = zaigen.Node('interest_in', node_type='source')
+	graph.add_node(interest_in_node)
 	
-def add_expense(graph, value):
-	expense_out = zaigen.Node('expense_out')
+	graph.add_edge(zaigen.Edge('saving_growth',
+					interest_in_node, 
+					new_end_node, 
+					zaigen.weights.Interest(0.01)))
+	
+	
+def add_expense(graph, value, schedule):
+	expense_out = zaigen.Node('expense_out', node_type='sink')
+
+	weight = zaigen.weights.Constant(value)
+	weight.schedule = schedule
 
 	graph.add_node(expense_out)
 	graph.add_edge(zaigen.Edge('expense', 
 								graph.current_node, 
 								expense_out, 
-								zaigen.weights.Constant(value)))
+								weight))
 	add_transfer(graph)
 
 def add_tax(graph, rate):
-	tax_out = zaigen.Node('tax_out')
+	tax_out = zaigen.Node('tax_out', node_type='sink')
 
 	graph.add_node(tax_out)
 	graph.add_edge(zaigen.Edge('tax', 
