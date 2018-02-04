@@ -38,7 +38,7 @@ class Remaining(Weight):
 	def __init__(self, fraction):
 		super(Remaining, self).__init__()
 		self.fraction = fraction
-		
+
 	def update(self, edge):
 		self.value = self.fraction*edge.start_node.value
 

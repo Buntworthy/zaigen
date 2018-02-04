@@ -1,7 +1,9 @@
 import zaigen
 
 class Graph(object):
-	
+	"""Graph data structure for outlining the flow of money in the simulation.
+	"""
+
 	def __init__(self):
 		self.nodes = []
 		self.edges = []
@@ -10,6 +12,10 @@ class Graph(object):
 	def add_node(self, node):
 		while node.name in [node.name for node in self.nodes]:
 			node.name += '.'
+
+		# TODO check for duplication
+		if not self.nodes:
+			self.current_node = node
 		self.nodes.append(node)
 
 	def get_node(self, node_name):
@@ -20,6 +26,11 @@ class Graph(object):
 		while edge.name in [edge.name for edge in self.edges]:
 			edge.name += '.'
 		self.edges.append(edge)
+
+		if edge.start_node not in self.nodes:
+			self.add_node(edge.start_node)
+		if edge.end_node not in self.nodes:
+			self.add_node(edge.end_node)
 
 	def get_edge(self, edge_name):
 		matching_edges = [edge for edge in self.edges if edge.name == edge_name]
@@ -46,10 +57,11 @@ class Graph(object):
 	def main_update(self):
 		# Breadth first update
 		while not self.updated:
-			nodes_to_update = [node 
-				for node in self.nodes 
+			nodes_to_update = [node
+				for node in self.nodes
 					if node.current_in_degree==0
 					and not node.updated]
+			#import pdb; pdb.set_trace()
 			for node in nodes_to_update:
 				node.update()
 
@@ -93,7 +105,9 @@ class Node(object):
 		self.type = node_type
 
 	def update(self):
+		print(f'Updating Node: {self.name}')
 		for node in self.downstream_nodes:
+			print(node)
 			for edge in node.edge_list:
 				if edge.start_node is self and not edge.updated:
 					edge.update()
@@ -116,7 +130,7 @@ class Node(object):
 
 class Edge(object):
 	"""Basic edge data structure for money graph"""
-	
+
 	def __init__(self, name, start_node, end_node, weight):
 		self.name = name
 		self.start_node = start_node
@@ -134,17 +148,18 @@ class Edge(object):
 		self.end_node.upstream_nodes.append(self.start_node)
 
 	def update(self):
+		print(f'Updating Edge: {self.name}')
 		self.weight.update(self)
 		self.start_node.value -= self.weight.value
 		self.end_node.value += self.weight.value
 		self.updated = True
-	
+
 	def record(self):
 		self.history.append(self.weight.value)
 
 	def reset(self):
 		self.updated = False
-		
+
 	@property
 	def pre_update(self):
 		return self.weight.pre_update
@@ -162,19 +177,19 @@ if __name__ == '__main__':
 	g.add_node(Node('Node 3'))
 	g.add_node(Node('Node 4'))
 
-	g.add_edge(Edge('Edge 1', 
-				start_node=g.get_node('Node 1'), 
-				end_node=g.get_node('Node 2'), 
+	g.add_edge(Edge('Edge 1',
+				start_node=g.get_node('Node 1'),
+				end_node=g.get_node('Node 2'),
 				weight=100))
 
-	g.add_edge(Edge('Edge 2', 
-				start_node=g.get_node('Node 1'), 
-				end_node=g.get_node('Node 3'), 
+	g.add_edge(Edge('Edge 2',
+				start_node=g.get_node('Node 1'),
+				end_node=g.get_node('Node 3'),
 				weight=100))
 
-	g.add_edge(Edge('Edge 3', 
-				start_node=g.get_node('Node 2'), 
-				end_node=g.get_node('Node 3'), 
+	g.add_edge(Edge('Edge 3',
+				start_node=g.get_node('Node 2'),
+				end_node=g.get_node('Node 3'),
 				weight=100))
 
 	print(g)
