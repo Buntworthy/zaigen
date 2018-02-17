@@ -101,7 +101,7 @@ class Node(object):
 		self.value = 0
 		self.updated = False
 		self.current_in_degree = self.in_degree
-		self.history = [self.value]
+		self.history = []
 		self.type = node_type
 
 	def update(self):
@@ -141,7 +141,7 @@ class Edge(object):
 			self.weight = zaigen.weights.Constant(weight)
 		else:
 			self.weight = weight
-		self.history = [self.weight.value]
+		self.history = []
 		self.start_node.edge_list.append(self)
 		self.end_node.edge_list.append(self)
 		self.start_node.downstream_nodes.append(self.end_node)
