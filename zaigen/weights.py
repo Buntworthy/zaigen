@@ -33,17 +33,17 @@ class Interest(Weight):
 		return(f'Interest({self.rate})')
 
 
-class Remaining(Weight):
+class Fraction(Weight):
 
 	def __init__(self, fraction):
-		super(Remaining, self).__init__()
+		super(Fraction, self).__init__()
 		self.fraction = fraction
 
 	def update(self, edge):
 		self.value = self.fraction*edge.start_node.value
 
 	def __repr__(self):
-		return(f'Remaining({self.fraction})')
+		return(f'Fraction({self.fraction})')
 
 class EdgeLinked(Weight):
 

@@ -26,11 +26,11 @@ def join_graphs(graph1, graph2):
 	graph1.add_edge(zaigen.Edge('transfer',
 					node1,
 					new_node,
-					zaigen.weights.Remaining(1)))
+					zaigen.weights.Fraction(1)))
 	graph1.add_edge(zaigen.Edge('transfer',
 					node2,
 					new_node,
-					zaigen.weights.Remaining(1)))
+					zaigen.weights.Fraction(1)))
 	graph1.current_node = new_node
 
 def add_salary(graph, name, value):
@@ -45,27 +45,32 @@ def add_salary(graph, name, value):
 	graph.current_node = inter_node
 
 
-def add_pension(graph, rate, salary_edge, contrib_rate, interest_rate):
-	pension_pot = zaigen.Node('pension_pot', node_type='asset')
-	interest_in_node = zaigen.Node('interest_in', node_type='source')
-	pension_contrib_node = zaigen.Node('pension_contrib', node_type='source')
+def add_pension(graph,
+				name,
+				employee_contribution,
+				salary_edge,
+				employer_contribution,
+				interest_rate):
+	pension_pot = zaigen.Node(name + '_pension_pot', node_type='asset')
+	interest_in_node = zaigen.Node(name + '_pension_growth', node_type='source')
+	pension_contrib_node = zaigen.Node(name + '_pension_contrib', node_type='source')
 
 	graph.add_node(pension_pot)
 	graph.add_node(interest_in_node)
 	graph.add_node(pension_contrib_node)
 	# Make sure to add the edges in the right order
-	graph.add_edge(zaigen.Edge('pension_payment',
+	graph.add_edge(zaigen.Edge(name + '_pension_payment',
 								graph.current_node,
 								pension_pot,
-								zaigen.weights.Remaining(rate)))
-	graph.add_edge(zaigen.Edge('interest',
+								zaigen.weights.Fraction(employee_contribution)))
+	graph.add_edge(zaigen.Edge(name + '_pension_interest',
 								interest_in_node,
 								pension_pot,
-								zaigen.weights.Interest(0.02)))
-	graph.add_edge(zaigen.Edge('pesnion_contrib',
+								zaigen.weights.Interest(interest_rate)))
+	graph.add_edge(zaigen.Edge(name + '_pension_contrib',
 								pension_contrib_node,
 								pension_pot,
-								zaigen.weights.EdgeLinked(contrib_rate,
+								zaigen.weights.EdgeLinked(employer_contribution,
 									graph.get_edge(salary_edge))))
 	add_transfer(graph)
 
@@ -75,7 +80,7 @@ def add_transfer(graph):
 	graph.add_edge(zaigen.Edge('transfer',
 								graph.current_node,
 								new_end_node,
-								zaigen.weights.Remaining(1)))
+								zaigen.weights.Fraction(1)))
 	graph.current_node = new_end_node
 
 def add_final_savings(graph):
@@ -84,7 +89,7 @@ def add_final_savings(graph):
 	graph.add_edge(zaigen.Edge('transfer',
 								graph.current_node,
 								new_end_node,
-								zaigen.weights.Remaining(1)))
+								zaigen.weights.Fraction(1)))
 	graph.current_node = new_end_node
 
 	interest_in_node = zaigen.Node('interest_in', node_type='source')
@@ -137,5 +142,5 @@ def add_tax(graph, rate):
 	graph.add_edge(zaigen.Edge('tax',
 								graph.current_node,
 								tax_out,
-								zaigen.weights.Remaining(rate)))
+								zaigen.weights.Fraction(rate)))
 	add_transfer(graph)

@@ -8,5 +8,4 @@ def test_pension():
 						zaigen.schedules.PiecewiseRate(5*[1.02] + 5*[1.01] + 10*[1]),
 						zaigen.schedules.ConstantRate(1.02))
 	zaigen.helpers.add_salary(g, 'j_salary', salary_weight)
-	zaigen.helpers.add_pension(g, 0.06, 'j_salary', 0.05, 0.02)
-	
+	zaigen.helpers.add_pension(g, 'bob', 0.06, 'j_salary', 0.05, 0.02)
