@@ -5,12 +5,13 @@ def show_graph(graph, filename=None):
 	dot = Digraph(comment='zaigen graph')
 	for node in graph.nodes:
 		if 'inter' in node.name:
-			label = ''
+			label = '.'
 		else:
-			label = f'{node.name} = {node.value:.0f}'
+			node_label = node.name.replace('_', '\n')
+			label = f'{node_label} = {node.value:.0f}'
 		dot.node(node.name, label)
 	for edge in graph.edges:
-		dot.edge(edge.start_node.name, 
+		dot.edge(edge.start_node.name,
 					edge.end_node.name,
 					label=f'{edge.name} = {edge.weight.value:.0f}')
 

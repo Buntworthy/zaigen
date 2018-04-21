@@ -101,14 +101,14 @@ def add_final_savings(graph):
 					zaigen.weights.Interest(0.01)))
 
 
-def add_expense(graph, value, schedule):
-	expense_out = zaigen.Node('expense_out', node_type='sink')
+def add_expense(graph, name, value, schedule):
+	expense_out = zaigen.Node(name + '_expense_out', node_type='sink')
 
 	weight = zaigen.weights.Constant(value)
 	weight.schedule = schedule
 
 	graph.add_node(expense_out)
-	graph.add_edge(zaigen.Edge('expense',
+	graph.add_edge(zaigen.Edge(name + '_expense',
 								graph.current_node,
 								expense_out,
 								weight))
