@@ -25,9 +25,9 @@ zaigen.helpers.join_graphs(g, g2)
 zaigen.helpers.add_mortgage(g, 170000, 17, 0.0244)
 
 
-zaigen.helpers.add_expense(g, 42000, (inflation(None)))
+zaigen.helpers.add_expense(g, 'daily', 42000, (inflation(None)))
 zaigen.helpers.add_final_savings(g)
-zaigen.viz.show_graph(g)
+zaigen.viz.show_graph(g, 'test.pdf')
 
 for i in range(10):
 	print(i)
