@@ -2,7 +2,7 @@ import zaigen
 from zaigen import schedules
 
 def make_inflation(rate):
-    inflation_schedule = schedules.ConstantRate(rate)
+    inflation_schedule = schedules.Rate(rate)
 
     def inflation(schedule):
         if schedule:
@@ -45,10 +45,7 @@ def add_salary(graph, name, amount, inflation=None, increase=None):
                         inter_node,
                         amount)
     if increase:
-        if len(increase) == 1:
-            increase = schedules.ConstantRate(increase)
-        else:
-            increase = schedules.PiecewiseRate(increase)
+        increase = schedules.Rate(increase)
     if inflation:
         increase = inflation(increase)
 
